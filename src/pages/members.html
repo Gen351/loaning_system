@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Members</title>
+</head>
+    <body>
+    <main>
+    <h1>Members</h1>
+
+    <button id="toggle-add">Add Member</button>
+
+    <form id="add-form" style="display:none; margin-top:12px;">
+        <input id="first-name" placeholder="First name" required />
+        <input id="last-name" placeholder="Last name" required />
+        <input id="share-count" type="number" min="0" placeholder="Share count" required />
+        <button type="submit">Save</button>
+        <button type="button" id="cancel-add">Cancel</button>
+    </form>
+
+    <p id="status" style="margin:10px 0;"></p>
+
+    <table border="1" cellpadding="6" cellspacing="0" width="100%">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Shares</th>
+                <th>Created</th>
+            </tr>
+        </thead>
+        <tbody id="members-tbody">
+        <!-- rows injected by JS -->
+        </tbody>
+    </table>
+    </main>
+
+    <!-- Vite will load this module -->
+    <script type="module" src="../utils/members_page.js"></script>
+    </body>
+</html>

@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Database as Excel Workbook</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script type="module" src="db_preview.js"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        .tab-button.active {
+            border-color: #3b82f6;
+            background-color: #eff6ff;
+            color: #3b82f6;
+            font-weight: 600;
+        }
+        .table-container {
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #e5e7eb;
+            padding: 10px 12px;
+            text-align: left;
+            white-space: nowrap;
+        }
+        th {
+            background-color: #f9fafb;
+            font-weight: 600;
+            color: #374151;
+        }
+        tr:nth-child(even) {
+            background-color: #f9fafb;
+        }
+        /* Style for clickable foreign keys */
+        .fk-link {
+            color: #2563eb;
+            text-decoration: underline;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .fk-link:hover {
+            color: #1d4ed8;
+        }
+        /* Style for the temporary highlight */
+        .highlight {
+            background-color: #fef08a !important; /* Tailwind yellow-300 */
+            transition: background-color 0.3s ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 p-4 sm:p-6 md:p-8">
+
+    <div class="max-w-7xl mx-auto bg-white rounded-2xl shadow-lg overflow-hidden">
+        <div class="p-6 border-b border-gray-200">
+            <h1 class="text-2xl font-bold text-gray-800">Database Schema Visualization</h1>
+            <p class="mt-1 text-gray-600">Click on an underlined ID to jump to its related entry in another sheet.</p>
+        </div>
+
+        <!-- Tabs Navigation -->
+        <div class="flex border-b border-gray-200 bg-gray-50 px-6 -mb-px flex-wrap">
+            <button class="tab-button py-3 px-4 border-b-2 border-transparent text-gray-500 hover:text-blue-500 hover:border-blue-500 focus:outline-none active" onclick="openTab('Member')">Member</button>
+            <button class="tab-button py-3 px-4 border-b-2 border-transparent text-gray-500 hover:text-blue-500 hover:border-blue-500 focus:outline-none" onclick="openTab('Loan')">Loan</button>
+            <button class="tab-button py-3 px-4 border-b-2 border-transparent text-gray-500 hover:text-blue-500 hover:border-blue-500 focus:outline-none" onclick="openTab('Savings')">Savings</button>
+            <button class="tab-button py-3 px-4 border-b-2 border-transparent text-gray-500 hover:text-blue-500 hover:border-blue-500 focus:outline-none" onclick="openTab('Penalty')">Penalty</button>
+            <button class="tab-button py-3 px-4 border-b-2 border-transparent text-gray-500 hover:text-blue-500 hover:border-blue-500 focus:outline-none" onclick="openTab('Loan_payment')">Loan Payment</button>
+            <button class="tab-button py-3 px-4 border-b-2 border-transparent text-gray-500 hover:text-blue-500 hover:border-blue-500 focus:outline-none" onclick="openTab('Penalty_payment')">Penalty Payment</button>
+        </div>
+
+        <!-- Tab Content -->
+        <div class="p-6">
+            <!-- Member Sheet -->
+            <div id="Member" class="tab-content">
+                <h2 class="text-xl font-semibold text-gray-700 mb-4">Sheet: Member</h2>
+                <div class="table-container rounded-lg border border-gray-200">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>first_name</th>
+                                <th>last_name</th>
+                                <th>share_count</th>
+                                <th>created_at</th>
+                            </tr>
+                        </thead>
+                        <tbody id="members-container">
+                            
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Loan Sheet -->
+            <div id="Loan" class="tab-content" style="display:none">
+                <h2 class="text-xl font-semibold text-gray-700 mb-4">Sheet: Loan</h2>
+                <div class="table-container rounded-lg border border-gray-200">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>member_id (Links to Member)</th>
+                                <th>amount</th>
+                                <th>penalty_id (Links to Penalty)</th>
+                                <th>created_at</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr id="a1b2c3d4-e5f6-a7b8-c9d0-e1f2a3b4c5d6">
+                                <td><span class="fk-link" onclick="goToAndHighlight('Member', '1f7b3c2a-8e9d-4f6c-b1a0-7b8c9d0e1f2a')">1f7b3c2a-8e9d-4f6c-b1a0-7b8c9d0e1f2a</span></td>
+                                <td>5000.00</td>
+                                <td>NULL</td>
+                                <td>2025-08-20 14:00:00</td>
+                            </tr>
+                            <tr id="b2c3d4e5-f6a7-b8c9-d0e1-f2a3b4c5d6e7">
+                                <td><span class="fk-link" onclick="goToAndHighlight('Member', '2a8c9d0b-1e2f-3a4b-5c6d-7e8f9a0b1c2d')">2a8c9d0b-1e2f-3a4b-5c6d-7e8f9a0b1c2d</span></td>
+                                <td>10000.00</td>
+                                <td><span class="fk-link" onclick="goToAndHighlight('Penalty', 'p1a2b3c4-d5e6-f7a8-b9c0-d1e2f3a4b5c6')">p1a2b3c4-d5e6-f7a8-b9c0-d1e2f3a4b5c6</span></td>
+                                <td>2025-08-19 08:45:00</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Savings Sheet -->
+            <div id="Savings" class="tab-content" style="display:none">
+                <h2 class="text-xl font-semibold text-gray-700 mb-4">Sheet: Savings</h2>
+                <div class="table-container rounded-lg border border-gray-200">
+                     <table>
+                        <thead>
+                            <tr>
+                                <th>member_id (Links to Member)</th>
+                                <th>amount</th>
+                                <th>penalty_id (Links to Penalty)</th>
+                                <th>created_at</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr id="s1a2b3c4-d5e6-f7a8-b9c0-d1e2f3a4b5c6">
+                                <td><span class="fk-link" onclick="goToAndHighlight('Member', '1f7b3c2a-8e9d-4f6c-b1a0-7b8c9d0e1f2a')">1f7b3c2a-8e9d-4f6c-b1a0-7b8c9d0e1f2a</span></td>
+                                <td>25000.00</td>
+                                <td>NULL</td>
+                                <td>2025-08-18 09:30:00</td>
+                            </tr>
+                            <tr id="s2b3c4d5-e6f7-a8b9-c0d1-e2f3a4b5c6d7">
+                                <td><span class="fk-link" onclick="goToAndHighlight('Member', '2a8c9d0b-1e2f-3a4b-5c6d-7e8f9a0b1c2d')">2a8c9d0b-1e2f-3a4b-5c6d-7e8f9a0b1c2d</span></td>
+                                <td>50000.00</td>
+                                <td>NULL</td>
+                                <td>2025-08-18 10:00:00</td>
+                            </tr>
+                             <tr id="s3c4d5e6-f7a8-b9c0-d1e2-f3a4b5c6d7e8">
+                                <td><span class="fk-link" onclick="goToAndHighlight('Member', '3b4d5e6f-7a8b-9c0d-1e2f-3a4b5c6d7e8f')">3b4d5e6f-7a8b-9c0d-1e2f-3a4b5c6d7e8f</span></td>
+                                <td>12000.00</td>
+                                <td><span class="fk-link" onclick="goToAndHighlight('Penalty', 'p2b3c4d5-e6f7-a8b9-c0d1-e2f3a4b5c6d7')">p2b3c4d5-e6f7-a8b9-c0d1-e2f3a4b5c6d7</span></td>
+                                <td>2025-08-19 11:15:00</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Penalty Sheet -->
+            <div id="Penalty" class="tab-content" style="display:none">
+                <h2 class="text-xl font-semibold text-gray-700 mb-4">Sheet: Penalty</h2>
+                <div class="table-container rounded-lg border border-gray-200">
+                     <table>
+                        <thead>
+                            <tr>
+                                <th>amount</th>
+                                <th>created_at</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr id="p1a2b3c4-d5e6-f7a8-b9c0-d1e2f3a4b5c6">
+                                <td>500.00</td>
+                                <td>2025-08-20 10:00:00</td>
+                            </tr>
+                            <tr id="p2b3c4d5-e6f7-a8b9-c0d1-e2f3a4b5c6d7">
+                                <td>150.00</td>
+                                <td>2025-08-20 11:00:00</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Loan Payment Sheet -->
+            <div id="Loan_payment" class="tab-content" style="display:none">
+                <h2 class="text-xl font-semibold text-gray-700 mb-4">Sheet: Loan Payment</h2>
+                <div class="table-container rounded-lg border border-gray-200">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>loan_id (Links to Loan)</th>
+                                <th>member_id (Links to Member)</th>
+                                <th>amount</th>
+                                <th>created_at</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr id="lp1a2b3c-4d5e-6f7a-8b9c-0d1e2f3a4b5c">
+                                <td><span class="fk-link" onclick="goToAndHighlight('Loan', 'a1b2c3d4-e5f6-a7b8-c9d0-e1f2a3b4c5d6')">a1b2c3d4-e5f6-a7b8-c9d0-e1f2a3b4c5d6</span></td>
+                                <td><span class="fk-link" onclick="goToAndHighlight('Member', '1f7b3c2a-8e9d-4f6c-b1a0-7b8c9d0e1f2a')">1f7b3c2a-8e9d-4f6c-b1a0-7b8c9d0e1f2a</span></td>
+                                <td>1000.00</td>
+                                <td>2025-08-20 15:00:00</td>
+                            </tr>
+                             <tr id="lp2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d">
+                                <td><span class="fk-link" onclick="goToAndHighlight('Loan', 'b2c3d4e5-f6a7-b8c9-d0e1-f2a3b4c5d6e7')">b2c3d4e5-f6a7-b8c9-d0e1-f2a3b4c5d6e7</span></td>
+                                <td><span class="fk-link" onclick="goToAndHighlight('Member', '2a8c9d0b-1e2f-3a4b-5c6d-7e8f9a0b1c2d')">2a8c9d0b-1e2f-3a4b-5c6d-7e8f9a0b1c2d</span></td>
+                                <td>2500.00</td>
+                                <td>2025-08-20 16:00:00</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Penalty Payment Sheet -->
+            <div id="Penalty_payment" class="tab-content" style="display:none">
+                <h2 class="text-xl font-semibold text-gray-700 mb-4">Sheet: Penalty Payment</h2>
+                <div class="table-container rounded-lg border border-gray-200">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>penalty_id (Links to Penalty)</th>
+                                <th>member_id (Links to Member)</th>
+                                <th>amount</th>
+                                <th>created_at</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr id="pp1a2b3c-4d5e-6f7a-8b9c-0d1e2f3a4b5c">
+                                <td><span class="fk-link" onclick="goToAndHighlight('Penalty', 'p1a2b3c4-d5e6-f7a8-b9c0-d1e2f3a4b5c6')">p1a2b3c4-d5e6-f7a8-b9c0-d1e2f3a4b5c6</span></td>
+                                <td><span class="fk-link" onclick="goToAndHighlight('Member', '2a8c9d0b-1e2f-3a4b-5c6d-7e8f9a0b1c2d')">2a8c9d0b-1e2f-3a4b-5c6d-7e8f9a0b1c2d</span></td>
+                                <td>500.00</td>
+                                <td>2025-08-20 17:00:00</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+    <script>
+        // JavaScript to handle tab switching functionality
+        function openTab(tabName) {
+            // Hide all tab content
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabContents.forEach(content => {
+                content.style.display = 'none';
+            });
+
+            // Deactivate all tab buttons
+            const tabButtons = document.querySelectorAll('.tab-button');
+            tabButtons.forEach(button => {
+                button.classList.remove('active');
+            });
+
+            // Show the selected tab content
+            document.getElementById(tabName).style.display = 'block';
+
+            // Activate the clicked tab button
+            const activeButton = Array.from(tabButtons).find(button => button.getAttribute('onclick').includes(`'${tabName}'`));
+            if (activeButton) {
+                activeButton.classList.add('active');
+            }
+        }
+
+        // New function to navigate and highlight a row
+        function goToAndHighlight(targetTab, targetId) {
+            // Switch to the correct tab first
+            openTab(targetTab);
+
+            // Find the target row by its ID
+            const targetRow = document.getElementById(targetId);
+
+            if (targetRow) {
+                // Scroll the row into the middle of the view for better visibility
+                targetRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+                // Add the highlight class to the row
+                targetRow.classList.add('highlight');
+
+                // Set a timer to remove the highlight class after 2 seconds (2000 milliseconds)
+                setTimeout(() => {
+                    targetRow.classList.remove('highlight');
+                }, 2000);
+            }
+        }
+    </script>
+
+    <script type="module" src="db_preview.js"></script>
+
+</html>

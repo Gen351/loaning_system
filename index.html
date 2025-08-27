@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Loan</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="app"></div>
+    <script type="module" src="src/main.js"></script>
+    <!-- <script type="module" src="src/pages/db_preview.js"></script> -->
+    <button id="btn-goto-members">Members</button>
+    <button id="btn-goto-savings">Savings</button>
+    <button id="btn-goto-loans">Loans</button>
+    <button id="btn-goto-penalties">Penalties</button>
+    <button id="btn-add-member">Add A Member</button>
+    <button id="btn-preview-db">Preview DB</button>
+</body>
+    
+<script>    
+    document.getElementById('btn-goto-members').addEventListener('click', () => {
+        window.open("src/pages/members.html", "_blank");
+    });
+
+    document.getElementById('btn-goto-savings').addEventListener('click', () => {
+        window.open("src/pages/savings.html", "_blank");
+    });
+
+    document.getElementById('btn-goto-loans').addEventListener('click', () => {
+        window.open("src/pages/loans.html", "_blank");
+    });
+
+    document.getElementById('btn-goto-penalties').addEventListener('click', () => {
+        window.open("src/pages/penalties.html", "_blank");
+    });
+
+    document.getElementById('btn-preview-db').addEventListener('click', () => {
+        window.open("src/pages/db_preview/db_preview.html", "_blank");
+    });
+
+    document.getElementById('btn-add-member').addEventListener('click', () => {
+        window.open("src/pages/add_member.html", "_blank");
+    });
+</script>
+
+</html>
