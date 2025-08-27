@@ -1,4 +1,4 @@
-import { renderMembers } from "../../supabase/fetch.js";
+import { renderMembers } from "../../models/member.js";
 
 // Set the default tab to be open on page load
 document.addEventListener("DOMContentLoaded", async () => {
