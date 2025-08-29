@@ -7,7 +7,8 @@ export default defineConfig({
       input: {
         // The main entry point for your application
         main: resolve(__dirname, 'index.html'),
-
+        // The admin page
+        admin: resolve(__dirname, 'admin.html'),
         // All the pages linked from your main page
         members: resolve(__dirname, 'src/pages/members.html'),
         savings: resolve(__dirname, 'src/pages/savings.html'),
