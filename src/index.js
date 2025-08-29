@@ -27,8 +27,5 @@ document.getElementById("google-login").addEventListener("click", async () => {
             await supabase.auth.signOut();
             document.getElementById("warning").classList.remove("hidden");
         }
-    } else {
-        // if the session is null
-        window.location.href = "../index.html";
     }
 })();
