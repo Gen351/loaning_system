@@ -1,3 +1,4 @@
+// index.js
 import { supabase } from "./services/supabaseClient";
 import { ADMIN_EMAIL } from "./services/admin_email";
 
