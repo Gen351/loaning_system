@@ -41,7 +41,7 @@ const membersHtml = ref("");
 const adminEmail = import.meta.env.VITE_ADMIN_EMAIL;
 
 const openPage = (page) => {
-  window.open(`/src/pages/${page}.vue`, "_blank");
+  window.open(`./${page}.vue`, "_blank");
 };
 
 onMounted(async () => {
