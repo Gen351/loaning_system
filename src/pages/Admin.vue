@@ -23,12 +23,12 @@
     </div>
 
     <div class="mt-6 flex gap-2 justify-center">
-      <button @click="openPage('members')">Members</button>
-      <button @click="openPage('savings')">Savings</button>
-      <button @click="openPage('loans')">Loans</button>
-      <button @click="openPage('penalties')">Penalties</button>
-      <button @click="openPage('add_member')">Add A Member</button>
-      <button @click="openPage('db_preview/db_preview')">Preview DB</button>
+      <button @click="openPage('Members')">Members</button>
+      <button @click="openPage('Savings')">Savings</button>
+      <button @click="openPage('Loans')">Loans</button>
+      <button @click="openPage('Penalties')">Penalties</button>
+      <button @click="openPage('AddMember')">Add A Member</button>
+      <button @click="openPage('DbPreview')">Preview DB</button>
     </div>
   </div>
 </template>
@@ -41,7 +41,7 @@ const membersHtml = ref("");
 const adminEmail = import.meta.env.VITE_ADMIN_EMAIL;
 
 const openPage = (page) => {
-  window.open(`/src/pages/${page}.html`, "_blank");
+  window.open(`/src/pages/${page}.vue`, "_blank");
 };
 
 onMounted(async () => {
