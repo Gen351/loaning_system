@@ -1,44 +1,47 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { supabase } from '@/services/supabaseClient'
 import Admin from '@/pages/Admin.vue'
-import Login from '@/pages/Login.vue'
+import Members from '@/pages/admin/Members.vue'
+import Savings from '@/pages/admin/Savings.vue'
+import Loans from '@/pages/admin/Loans.vue'
+import Penalties from '@/pages/admin/Penalties.vue'
+import { supabase } from '@/services/supabaseClient'
 
 const router = createRouter({
   history: createWebHistory(),
   routes: [
-    { path: '/', redirect: '/admin' },
-    { path: '/login', component: Login },
     {
       path: '/admin',
+      name: 'Admin',
       component: Admin,
       meta: { requiresAuth: true },
+      children: [
+        { path: 'members', component: Members },
+        { path: 'savings', component: Savings },
+        { path: 'loans', component: Loans },
+        { path: 'penalties', component: Penalties },
+      ],
     },
+    { path: '/', redirect: '/admin/members' }, // default view
   ],
 })
 
+/**
+ * Auth guard — automatically checks Supabase user session
+ */
 router.beforeEach(async (to, from, next) => {
-  const { data } = await supabase.auth.getSession()
-  const session = data.session
-  const adminEmail = import.meta.env.VITE_ADMIN_EMAIL
+  const { data: { session } } = await supabase.auth.getSession()
 
-  // If route requires login but user isn't logged in → redirect to Google
+  // If the route needs login but there’s no session
   if (to.meta.requiresAuth && !session) {
-    console.log('🔒 Not logged in → redirecting to Google login...')
+    console.warn('Not logged in — redirecting to Google sign-in')
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: window.location.origin + '/admin',
+        redirectTo: window.location.origin + '/admin/members',
       },
     })
-    if (error) console.error('Google login failed:', error.message)
-    return // stop navigation while redirecting
-  }
-
-  // If logged in but not admin → kick them out
-  if (session && session.user.email !== adminEmail) {
-    alert('🚫 You are not authorized to access this admin panel.')
-    await supabase.auth.signOut()
-    return next('/login')
+    if (error) console.error('Google auth error:', error.message)
+    return; // stop navigation until redirect completes
   }
 
   next()
