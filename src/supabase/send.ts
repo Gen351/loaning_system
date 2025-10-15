@@ -1,6 +1,6 @@
 import { supabase } from "../services/supabaseClient";
 
-export async function addMember({ first_name, last_name, share_count }) {
+export async function addMember({ first_name = "", last_name = "", share_count = 0 }) {
   const payload = {
     first_name,
     last_name,

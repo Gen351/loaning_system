@@ -1,4 +1,4 @@
-import { supabase } from "../services/supabaseClient.js";
+import { supabase } from "../services/supabaseClient";
 
 // supabase/fetch.js
 export async function getMembers() {
